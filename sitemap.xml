@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <url>
+    <loc>https://empresas.ambientalhigiene.com.br/</loc>
+    <lastmod>2026-06-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://empresas.ambientalhigiene.com.br/assets/banner-hero-desktop.png</image:loc>
+      <image:title>Produtos de limpeza e higiene para empresas</image:title>
+      <image:caption>Abastecimento mensal de produtos de limpeza, higiene e descartáveis para empresas</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://empresas.ambientalhigiene.com.br/assets/banner-hero-mobile.png</image:loc>
+      <image:title>Ambiental Higiene · produtos para empresas</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>https://empresas.ambientalhigiene.com.br/assets/cta-caminhao.png</image:loc>
+      <image:title>Entrega programada na sua região</image:title>
+    </image:image>
+  </url>
+
+</urlset>

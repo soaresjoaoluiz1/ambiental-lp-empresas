@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://empresas.ambientalhigiene.com.br/sitemap.xml
+
+# Crawl-delay para bots agressivos (em segundos)
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 10
+
+# Bots que não trazem valor — bloqueio opcional
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
