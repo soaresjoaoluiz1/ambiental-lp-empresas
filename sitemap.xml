@@ -8,16 +8,16 @@
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://empresas.ambientalhigiene.com.br/assets/banner-hero-desktop.png</image:loc>
+      <image:loc>https://empresas.ambientalhigiene.com.br/assets/banner-hero-desktop.webp</image:loc>
       <image:title>Produtos de limpeza e higiene para empresas</image:title>
       <image:caption>Abastecimento mensal de produtos de limpeza, higiene e descartáveis para empresas</image:caption>
     </image:image>
     <image:image>
-      <image:loc>https://empresas.ambientalhigiene.com.br/assets/banner-hero-mobile.png</image:loc>
+      <image:loc>https://empresas.ambientalhigiene.com.br/assets/banner-hero-mobile.webp</image:loc>
       <image:title>Ambiental Higiene · produtos para empresas</image:title>
     </image:image>
     <image:image>
-      <image:loc>https://empresas.ambientalhigiene.com.br/assets/cta-caminhao.png</image:loc>
+      <image:loc>https://empresas.ambientalhigiene.com.br/assets/cta-caminhao.webp</image:loc>
       <image:title>Entrega programada na sua região</image:title>
     </image:image>
   </url>
