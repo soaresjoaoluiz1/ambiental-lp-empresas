@@ -38,6 +38,22 @@
 <link rel="icon" type="image/png" href="assets/logo.png">
 <link rel="apple-touch-icon" href="assets/logo.png">
 
+<!-- ============= META PIXEL (Facebook) ============= -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '146452464142691');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=146452464142691&ev=PageView&noscript=1"/></noscript>
+
 <!-- ============= PRELOAD CRITICAL (LCP) ============= -->
 <link rel="preload" as="image" href="assets/banner-hero-mobile.webp" media="(max-width: 959px)">
 <link rel="preload" as="image" href="assets/banner-hero-desktop.webp" media="(min-width: 960px)">
@@ -2365,10 +2381,67 @@
   });
 </script>
 
+<!-- ============= TRACKING CAPTURE (UTM, click IDs, cookies, referrer) ============= -->
+<script>
+(function() {
+  const STORAGE_KEY = '_ambi_track';
+
+  // First-touch attribution: salva uma vez por sessao
+  function captureFirstTouch() {
+    if (sessionStorage.getItem(STORAGE_KEY)) return;
+    const params = new URLSearchParams(window.location.search);
+    const firstTouch = {
+      first_referrer: document.referrer || 'direct',
+      first_landing_url: window.location.href,
+      first_visit_at: new Date().toISOString(),
+      utm_source: params.get('utm_source') || '',
+      utm_medium: params.get('utm_medium') || '',
+      utm_campaign: params.get('utm_campaign') || '',
+      utm_content: params.get('utm_content') || '',
+      utm_term: params.get('utm_term') || '',
+      utm_id: params.get('utm_id') || '',
+      fbclid: params.get('fbclid') || '',
+      gclid: params.get('gclid') || '',
+      gbraid: params.get('gbraid') || '',
+      wbraid: params.get('wbraid') || '',
+      ttclid: params.get('ttclid') || '',
+      msclkid: params.get('msclkid') || '',
+      li_fat_id: params.get('li_fat_id') || '',
+      twclid: params.get('twclid') || ''
+    };
+    try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(firstTouch)); } catch(e) {}
+  }
+
+  function getCookie(name) {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/[.$?*|{}()[\]\\\/+^]/g, '\\$&') + '=([^;]*)'));
+    return m ? decodeURIComponent(m[1]) : '';
+  }
+
+  window.__getTrackingData = function() {
+    let ft = {};
+    try { ft = JSON.parse(sessionStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) {}
+    return Object.assign({}, ft, {
+      current_url: window.location.href,
+      current_referrer: document.referrer || 'direct',
+      fbp: getCookie('_fbp'),
+      fbc: getCookie('_fbc'),
+      ga_cid: getCookie('_ga'),
+      gcl_au: getCookie('_gcl_au'),
+      user_agent: navigator.userAgent,
+      language: navigator.language || '',
+      screen: (screen.width || '') + 'x' + (screen.height || ''),
+      timezone: (Intl.DateTimeFormat().resolvedOptions().timeZone) || '',
+      submit_at: new Date().toISOString()
+    });
+  };
+
+  captureFirstTouch();
+})();
+</script>
+
 <!-- ============= FORM SUBMIT (Google Apps Script) ============= -->
 <script>
 (function() {
-  // SUBSTITUIR pela URL real do Apps Script Web App (terminada em /exec)
   const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzyh9Kgk6vFCwcwFx7wqMRZsrGE8DFtyBPKKaDoHXe24OaooPoDIFP4LGVte_mFsMbp9Q/exec';
 
   const form = document.querySelector('.quote-form-card');
@@ -2385,14 +2458,44 @@
 
     if (submitBtn.disabled) return;
     submitBtn.disabled = true;
-    const originalHTML = submitBtn.innerHTML;
     submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;animation:spin 1s linear infinite"><circle cx="12" cy="12" r="9" opacity="0.25"/><path d="M12 3a9 9 0 0 1 9 9"/></svg> Enviando...';
 
-    // Monta payload
+    // Monta payload com form + tracking
     const formData = new FormData(form);
-    const payload = {};
+    const payload = { origem: 'LP Empresas' };
     for (const [k, v] of formData.entries()) payload[k] = v;
-    payload.origem = 'LP Empresas';
+    // Anexa todos dados de tracking
+    const tracking = (window.__getTrackingData && window.__getTrackingData()) || {};
+    Object.assign(payload, tracking);
+
+    // EventID pra dedup do Lead event entre index e obrigado
+    const eventID = 'lead.' + Date.now() + '.' + Math.random().toString(36).slice(2, 8);
+    payload.fb_event_id = eventID;
+
+    // Salva dados do lead pra usar no obrigado.html (Advanced Matching + custom event)
+    try {
+      sessionStorage.setItem('_ambi_lead', JSON.stringify({
+        nome: payload.nome || '',
+        whatsapp: payload.whatsapp || '',
+        cidade: payload.cidade || '',
+        empresa: payload.empresa || '',
+        funcionarios: payload.funcionarios || '',
+        produtos: payload.produtos || '',
+        eventID: eventID
+      }));
+    } catch(e) {}
+
+    // Meta Pixel: Lead event no momento do submit
+    if (window.fbq) {
+      try {
+        fbq('track', 'Lead', {
+          content_name: 'Orcamento Ambiental Higiene',
+          content_category: 'Higiene e Limpeza para Empresas',
+          currency: 'BRL',
+          value: 100.00
+        }, { eventID: eventID });
+      } catch(e) { console.error('[fbq] Lead:', e); }
+    }
 
     // Fire and forget — mode no-cors evita preflight CORS do Apps Script
     fetch(FORM_ENDPOINT, {
@@ -2402,8 +2505,6 @@
       body: JSON.stringify(payload)
     }).catch(err => console.error('[form] erro envio:', err))
       .finally(() => {
-        // Redireciona pra pagina de obrigado independente de sucesso/erro
-        // (no-cors response e opaque, nao da pra checar status real)
         window.location.href = '/obrigado.html';
       });
   });

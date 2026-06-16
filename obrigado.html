@@ -19,12 +19,66 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-<!-- ============== TRACKING (adicionar IDs reais aqui) ==============
+<!-- ============= META PIXEL BASE ============= -->
 <script>
-  // gtag('event', 'conversion', { send_to: 'AW-XXXXXX/YYYYY' });
-  // fbq('track', 'Lead', { content_name: 'orcamento_solicitado' });
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+// Init com Advanced Matching usando dados do lead (FB hash automaticamente)
+(function() {
+  let lead = {};
+  try { lead = JSON.parse(sessionStorage.getItem('_ambi_lead') || '{}'); } catch(e) {}
+
+  const advancedMatching = {};
+  if (lead.nome) {
+    const parts = lead.nome.trim().toLowerCase().split(/\s+/);
+    if (parts[0]) advancedMatching.fn = parts[0];
+    if (parts.length > 1) advancedMatching.ln = parts.slice(1).join(' ');
+  }
+  if (lead.whatsapp) {
+    // Normaliza pra E.164 BR: +55DDDNNNNNNNNN
+    let phone = lead.whatsapp.replace(/\D/g, '');
+    if (phone && !phone.startsWith('55')) phone = '55' + phone;
+    advancedMatching.ph = phone;
+  }
+  if (lead.cidade) advancedMatching.ct = lead.cidade.toLowerCase().replace(/[^a-z0-9]/g, '');
+  advancedMatching.country = 'br';
+
+  fbq('init', '146452464142691', advancedMatching);
+  fbq('track', 'PageView');
+
+  // Lead event (mesmo eventID do submit pra dedup) + Lead-Empresa custom
+  const eventID = lead.eventID || ('lead.confirm.' + Date.now());
+  try {
+    fbq('track', 'Lead', {
+      content_name: 'Orcamento Ambiental Higiene',
+      content_category: 'Higiene e Limpeza para Empresas',
+      currency: 'BRL',
+      value: 100.00
+    }, { eventID: eventID });
+
+    fbq('trackCustom', 'Lead-Empresa', {
+      content_name: 'Orcamento Ambiental Higiene',
+      content_category: 'Higiene e Limpeza para Empresas',
+      currency: 'BRL',
+      value: 100.00,
+      empresa: lead.empresa || '',
+      cidade: lead.cidade || '',
+      funcionarios: lead.funcionarios || '',
+      produtos: lead.produtos || '',
+      lead_source: 'LP Empresas'
+    }, { eventID: eventID + '.custom' });
+  } catch(e) { console.error('[fbq] track error:', e); }
+})();
 </script>
-==================================================================== -->
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=146452464142691&ev=PageView&noscript=1"/></noscript>
 
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
