@@ -2365,5 +2365,53 @@
   });
 </script>
 
+<!-- ============= FORM SUBMIT (Google Apps Script) ============= -->
+<script>
+(function() {
+  // SUBSTITUIR pela URL real do Apps Script Web App (terminada em /exec)
+  const FORM_ENDPOINT = 'COLAR_URL_DO_APPS_SCRIPT_AQUI';
+
+  const form = document.querySelector('.quote-form-card');
+  if (!form) return;
+  const submitBtn = form.querySelector('.btn-submit');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    const originalHTML = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;animation:spin 1s linear infinite"><circle cx="12" cy="12" r="9" opacity="0.25"/><path d="M12 3a9 9 0 0 1 9 9"/></svg> Enviando...';
+
+    // Monta payload
+    const formData = new FormData(form);
+    const payload = {};
+    for (const [k, v] of formData.entries()) payload[k] = v;
+    payload.origem = 'LP Empresas';
+
+    // Fire and forget — mode no-cors evita preflight CORS do Apps Script
+    fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).catch(err => console.error('[form] erro envio:', err))
+      .finally(() => {
+        // Redireciona pra pagina de obrigado independente de sucesso/erro
+        // (no-cors response e opaque, nao da pra checar status real)
+        window.location.href = '/obrigado.html';
+      });
+  });
+})();
+</script>
+<style>
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+</style>
+
 </body>
 </html>
