@@ -192,7 +192,9 @@
     --radius-pill: 999px;
   }
 
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  /* offset pro header sticky nao cobrir o anchor */
+  section[id] { scroll-margin-top: 80px; }
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     color: var(--ink-900);
@@ -334,10 +336,10 @@
     position: absolute;
     inset: 0;
     background: linear-gradient(180deg,
-      rgba(255,255,255,0.95) 0%,
-      rgba(255,255,255,0.92) 30%,
-      rgba(255,255,255,0.65) 48%,
-      rgba(255,255,255,0) 70%);
+      rgba(255,255,255,0.92) 0%,
+      rgba(255,255,255,0.75) 18%,
+      rgba(255,255,255,0.35) 36%,
+      rgba(255,255,255,0) 52%);
     pointer-events: none;
     z-index: 0;
   }
@@ -401,10 +403,12 @@
 
   .hero-lead {
     font-size: 15px;
-    color: var(--ink-500);
+    color: var(--ink-900);
+    font-weight: 500;
     max-width: 540px;
     margin-bottom: 22px;
     line-height: 1.6;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.7);
   }
 
   /* Feature pills */
@@ -1424,8 +1428,8 @@
     <nav class="nav-links" aria-label="Menu principal">
       <a href="#como-funciona">Como funciona</a>
       <a href="#produtos">Produtos</a>
-      <a href="#regiao">Região atendida</a>
-      <a href="#contato">Contato</a>
+      <a href="#comparativo">Comparativo</a>
+      <a href="#duvidas">Dúvidas</a>
     </nav>
 
     <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="navDrawer">
@@ -1463,8 +1467,8 @@
     </button>
     <a href="#como-funciona" class="nav-drawer-link">Como funciona</a>
     <a href="#produtos" class="nav-drawer-link">Produtos</a>
-    <a href="#regiao" class="nav-drawer-link">Região atendida</a>
-    <a href="#contato" class="nav-drawer-link">Contato</a>
+    <a href="#comparativo" class="nav-drawer-link">Comparativo</a>
+    <a href="#duvidas" class="nav-drawer-link">Dúvidas</a>
     <a href="#orcamento" class="btn btn-primary">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -1522,7 +1526,7 @@
           </ul>
 
           <div class="hero-actions">
-            <a href="#regiao" class="btn btn-primary">
+            <a href="#orcamento" class="btn btn-primary">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
                 <circle cx="12" cy="10" r="3"/>
@@ -1814,7 +1818,7 @@
   </section>
 
   <!-- ============= ESSENTIALS (PRODUTOS) ============= -->
-  <section class="essentials" aria-labelledby="essentialsTitle" data-aos="fade-up">
+  <section class="essentials" id="produtos" aria-labelledby="essentialsTitle" data-aos="fade-up">
     <div class="container">
       <h2 class="essentials-title" id="essentialsTitle">
         <span class="t-short">Itens essenciais para sua empresa</span>
@@ -1937,7 +1941,7 @@
   </section>
 
   <!-- ============= COMPARISON ============= -->
-  <section class="comparison" aria-labelledby="comparisonTitle" data-aos="fade-up">
+  <section class="comparison" id="comparativo" aria-labelledby="comparisonTitle" data-aos="fade-up">
     <div class="container">
       <h2 class="comparison-title" id="comparisonTitle">
         <span class="t-short">Última hora vs Programado</span>
@@ -2050,7 +2054,7 @@
   </section>
 
   <!-- ============= HOW IT WORKS ============= -->
-  <section class="how-it-works" aria-labelledby="howTitle" data-aos="fade-up">
+  <section class="how-it-works" id="como-funciona" aria-labelledby="howTitle" data-aos="fade-up">
     <div class="container">
       <h2 class="how-title" id="howTitle">Como funciona</h2>
 
@@ -2242,7 +2246,7 @@
   </section>
 
   <!-- ============= FAQ ============= -->
-  <section class="faq" aria-labelledby="faqTitle" data-aos="fade-up">
+  <section class="faq" id="duvidas" aria-labelledby="faqTitle" data-aos="fade-up">
     <div class="container">
       <h2 class="faq-title" id="faqTitle">Dúvidas frequentes</h2>
 
