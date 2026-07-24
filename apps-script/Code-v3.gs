@@ -166,31 +166,43 @@ function ensureSheet_() {
 function sendToCRM_(data) {
   if (!CRM_URL) return { status: 'sem_url', body: '' };
 
-  var telClean = (data.whatsapp || '').replace(/\D/g, '');
+  // IMPORTANTE: valores lidos da planilha podem vir como Number (ex: whatsapp
+  // "5511999999999" vira 5511999999999). Converter tudo pra String antes de
+  // operacoes de string (.replace, .indexOf, .split).
+  var whatsapp     = String(data.whatsapp || '');
+  var nome         = String(data.nome || '');
+  var empresa      = String(data.empresa || '');
+  var email        = String(data.email || '');
+  var funcionarios = String(data.funcionarios || '');
+  var produtos     = String(data.produtos || '');
+  var origemLP     = String(data.origem || '');
+  var cidadeRaw    = String(data.cidade || '');
+
+  var telClean = whatsapp.replace(/\D/g, '');
 
   // Origem normalizada pra source do CRM
   var origem = detectSource_(data);
 
   // source_detail com qualificadores da LP Empresas (aparece no card do CRM)
   var detailBits = [];
-  if (data.funcionarios) detailBits.push('Funcionarios: ' + data.funcionarios);
-  if (data.produtos)     detailBits.push('Produtos: ' + data.produtos);
-  if (data.cidade)       detailBits.push('Cidade: ' + data.cidade);
-  if (data.origem)       detailBits.push('LP: ' + data.origem);
+  if (funcionarios) detailBits.push('Funcionarios: ' + funcionarios);
+  if (produtos)     detailBits.push('Produtos: ' + produtos);
+  if (cidadeRaw)    detailBits.push('Cidade: ' + cidadeRaw);
+  if (origemLP)     detailBits.push('LP: ' + origemLP);
 
   // Tags automaticas
   var tags = [LEAD_TAG];
-  if (data.funcionarios) {
-    tags.push('Funcionarios: ' + data.funcionarios);
+  if (funcionarios) {
+    tags.push('Funcionarios: ' + funcionarios);
   }
-  if (data.produtos) {
+  if (produtos) {
     // Se veio como array/CSV, quebra em multiplas tags
-    var produtos = String(data.produtos).split(/[,;]/).map(function(s){return s.trim()}).filter(Boolean);
-    produtos.forEach(function(p) { tags.push('Produto: ' + p); });
+    var produtosList = produtos.split(/[,;]/).map(function(s){return s.trim()}).filter(Boolean);
+    produtosList.forEach(function(p) { tags.push('Produto: ' + p); });
   }
 
   // Separa cidade/bairro se tiver "/"
-  var cidade = data.cidade || '';
+  var cidade = cidadeRaw;
   var bairro = '';
   if (cidade.indexOf('/') !== -1) {
     var parts = cidade.split('/').map(function(s){return s.trim()});
@@ -199,12 +211,12 @@ function sendToCRM_(data) {
   }
 
   var payload = {
-    name: data.nome || '',
+    name: nome,
     phone: telClean,
-    email: data.email || '', // form nao pede email, fica vazio
+    email: email, // form nao pede email, fica vazio
     city: cidade,
     state: '', // form nao pede estado, deixa vazio
-    empresa: data.empresa || '',
+    empresa: empresa,
     // bairro/complemento vai no source_detail
     source: origem,
     source_detail: detailBits.join(' | ') + (bairro ? ' | Bairro: ' + bairro : ''),
@@ -247,9 +259,10 @@ function sendToCRM_(data) {
 
 // ============= NORMALIZACAO DA FONTE =============
 function detectSource_(d) {
-  var src = (d.utm_source || '').toLowerCase();
-  var med = (d.utm_medium || '').toLowerCase();
-  var ref = (d.current_referrer || d.first_referrer || '').toLowerCase();
+  // Converte pra String antes (planilha as vezes retorna Number ou boolean)
+  var src = String(d.utm_source || '').toLowerCase();
+  var med = String(d.utm_medium || '').toLowerCase();
+  var ref = String(d.current_referrer || d.first_referrer || '').toLowerCase();
   var hasFbclid = !!d.fbclid;
   var hasGclid = !!d.gclid;
 
